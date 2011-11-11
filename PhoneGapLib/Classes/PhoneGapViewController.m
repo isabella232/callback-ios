@@ -105,4 +105,19 @@
     [super dealloc];
 }
 
+
+#pragma mark - Properties
+
+- (void)setWebView:(UIWebView *)aWebView
+{
+    if (![aWebView isEqual:webView]) {
+        [webView removeFromSuperview];
+        [webView release];
+        
+        webView = [aWebView retain];
+        if (nil != webView) {
+            [self.view addSubview:webView];
+        }
+    }
+}
 @end

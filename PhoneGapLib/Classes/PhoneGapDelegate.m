@@ -26,6 +26,10 @@
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
+
+NSString * const kAppPlistName =  @"PhoneGap";
+NSString * const kAppPlist_PluginsKey = @"Plugins";
+
 // class extension
 @interface PhoneGapDelegate ()
 
@@ -353,57 +357,143 @@ BOOL gSplashScreenShown = NO;
     }
 }
 
+
+
 /**
  * This is main kick off after the app inits, the views and Settings are setup here.
  */
-// - (void)applicationDidFinishLaunching:(UIApplication *)application
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{    
-    // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-    NSArray* supportedOrientations = [self parseInterfaceOrientations:
-                                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
-    
-    // read from PhoneGap.plist in the app bundle
-    NSString* appPlistName = @"PhoneGap";
-    NSDictionary* phonegapPlist = [[self class] getBundlePlist:appPlistName];
-    if (phonegapPlist == nil) {
-        NSLog(@"WARNING: %@.plist is missing.", appPlistName);
-        return NO;
-    }
-    self.settings = [[[NSDictionary alloc] initWithDictionary:phonegapPlist] autorelease];
+{
+    NSDictionary *settingsDict = [[self class] getBundlePlist:kAppPlistName];
+    self.settings = settingsDict;
 
-    // read from Plugins dict in PhoneGap.plist in the app bundle
-    NSString* pluginsKey = @"Plugins";
-    NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
-    if (pluginsDict == nil) {
-        NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
-        return NO;
+    [self reinitializePlugins];
+    
+    // set the external hosts whitelist
+    PGWhitelist *hostWhitelist = [[PGWhitelist alloc] initWithArray:[settingsDict objectForKey:@"ExternalHosts"]];
+    self.whitelist = hostWhitelist;
+    [hostWhitelist release];
+
+    [self reinitializeWebView];
+
+    
+    NSString *startPage = [[self class] startPage]; //TODO make this more configurable, and/or instance method?
+    NSURL *appURL = [NSURL URLWithString:startPage];
+    NSString *loadErr = nil;
+    
+    if (nil == [appURL scheme]) {
+        NSString* startFilePath = [[self class] pathForResource:startPage];
+        if (nil == startFilePath) {
+            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
+            NSLog(@"%@", loadErr);
+            appURL = nil;
+        }
+        else {
+            appURL = [NSURL fileURLWithPath:startFilePath];
+        }
     }
     
-    // set the whitelist
-    self.whitelist = [[[PGWhitelist alloc] initWithArray:[self.settings objectForKey:@"ExternalHosts"]] autorelease];
+    if (nil == loadErr) {
+        NSLog(@"loading appURL: %@",appURL);
+        //TODO make timeoutInterval and cachePolicy configurable?
+        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL 
+                                                cachePolicy:NSURLRequestUseProtocolCachePolicy 
+                                            timeoutInterval:20.0];
+        [self.webView loadRequest:appReq];
+    } else {
+        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+        [self.webView loadHTMLString:html baseURL:nil];
+        self.loadFromString = YES;
+    }
     
+    [self.window makeKeyAndVisible];
+
+    if (self.loadFromString) {
+        self.imageView.hidden = YES;
+    }
+    
+    return YES;
+
+}
+
+#pragma mark - Plugins management
+
+- (void)reinitializePlugins
+{
+    NSLog(@"reinitializePlugins");
+    // read from Plugins dict in PhoneGap.plist in the app bundle
+    NSDictionary* pluginsDict = [self.settings objectForKey:kAppPlist_PluginsKey];
+    if (pluginsDict == nil) {
+        NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", kAppPlist_PluginsKey, kAppPlistName);
+        NSAssert(nil != pluginsDict,@"Plugins key required in plist");
+    }
+    
+    //reinit the plugins class map
     self.pluginsMap = [pluginsDict dictionaryWithLowercaseKeys];
+    //reinit the plugins instance map
+    self.pluginObjects = [[[NSMutableDictionary alloc] initWithCapacity:4] autorelease];
     
-    self.viewController = [[[PhoneGapViewController alloc] init] autorelease];
+    //setup the Location plugin
+    //Fire up the GPS Service right away as it takes a moment for data to come back.
+    BOOL enableLocation   = [[self.settings objectForKey:@"EnableLocation"] boolValue];    
+    if (enableLocation) {
+        [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
+    }
     
-    NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
-    NSString *enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
-    NSNumber *allowInlineMediaPlayback = [self.settings objectForKey:@"AllowInlineMediaPlayback"];
-    NSNumber *mediaPlaybackRequiresUserAction = [self.settings objectForKey:@"MediaPlaybackRequiresUserAction"];
+}
+
+#pragma mark - Embedded UIWebView management
+
+
+- (void)teardownWebView {
+    NSLog(@"teardownWebView");
+    [self.webView setDelegate:nil];
+
+    self.viewController.webView = nil;
+    self.viewController = nil;
+    self.webView = nil;
+    [self.window setRootViewController:nil];
+}
+
+- (void)configureWebViewFromSettings:(UIWebView*)aWebView
+{
+    NSLog(@"configureWebViewFromSettings");
+
+    //configure the web view
+    BOOL enableViewportScale = [[self.settings objectForKey:@"EnableViewportScale"] boolValue];
+    BOOL allowInlineMediaPlayback = [[self.settings objectForKey:@"AllowInlineMediaPlayback"] boolValue];
+    BOOL mediaPlaybackRequiresUserAction = [[self.settings objectForKey:@"MediaPlaybackRequiresUserAction"] boolValue];
     
-    // Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
-    viewController.supportedOrientations = supportedOrientations;
+        
+    aWebView.scalesPageToFit = enableViewportScale;
     
+    if (allowInlineMediaPlayback && [aWebView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
+        aWebView.allowsInlineMediaPlayback = YES;
+    }
+    
+    if (mediaPlaybackRequiresUserAction && [aWebView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
+        aWebView.mediaPlaybackRequiresUserAction = YES;
+    }
+ 
+}
+
+- (void)reinitializeWebView
+{
+    
+    NSLog(@"reinitializeWebView");
+
     //check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation
+    NSArray* supportedOrientations = [self parseInterfaceOrientations:
+                                      [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
+    
     BOOL forceStartupRotation = YES;
     UIDeviceOrientation curDevOrientation = [[UIDevice currentDevice] orientation];
-
+    
     if (UIDeviceOrientationUnknown == curDevOrientation) {
         //UIDevice isn't firing orientation notifications yet...go look at status bar
-        curDevOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        curDevOrientation = (UIDeviceOrientation)[[UIApplication sharedApplication] statusBarOrientation];
     }
-
+    
     if (UIDeviceOrientationIsValidInterfaceOrientation(curDevOrientation)) {
         for (NSNumber *orient in supportedOrientations) {
             if ([orient intValue] == curDevOrientation) {
@@ -421,85 +511,35 @@ BOOL gSplashScreenShown = NO;
         [[UIApplication sharedApplication] setStatusBarOrientation:newOrient];
     }
     
-    CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
-    self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
-
-
-    self.window.autoresizesSubviews = YES;
-    CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
-    webViewBounds.origin = screenBounds.origin;
-    if (!self.webView) {
-        self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
-    }
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    self.webView.scalesPageToFit = [enableViewportScale boolValue];
-    
-    viewController.webView = self.webView;
-    [self.viewController.view addSubview:self.webView];
-    
         
-    /*
-     * Fire up the GPS Service right away as it takes a moment for data to come back.
-     */
-    if ([allowInlineMediaPlayback boolValue] && [self.webView respondsToSelector:@selector(allowsInlineMediaPlayback)]) {
-        self.webView.allowsInlineMediaPlayback = YES;
-    }
-    if ([mediaPlaybackRequiresUserAction boolValue] && [self.webView respondsToSelector:@selector(mediaPlaybackRequiresUserAction)]) {
-        self.webView.mediaPlaybackRequiresUserAction = YES;
-    }
+    //create and configure a new UIWebView
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    UIWindow *newWindow =  [[UIWindow alloc] initWithFrame:screenBounds ];
+    self.window = newWindow;
+    [newWindow release];
+    
+    CGRect webViewBounds = [[UIScreen mainScreen] applicationFrame] ;
+    webViewBounds.origin = screenBounds.origin;
+    UIWebView *newWebView = [[UIWebView alloc ] initWithFrame:webViewBounds];
+    newWebView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    [self configureWebViewFromSettings:newWebView];
+    self.webView = newWebView;
+    [self.webView setDelegate:self];
 
-    /*
-     * This is for iOS 4.x, where you can allow inline <video> and <audio>, and also autoplay them
-     */
-    if ([enableLocation boolValue]) {
-        [[self getCommandInstance:@"com.phonegap.geolocation"] startLocation:nil withDict:nil];
-    }
+    //create a new root view controller
+    PhoneGapViewController *vc = [[PhoneGapViewController alloc] init];
+    vc.supportedOrientations = supportedOrientations;
+    vc.webView = newWebView;//setting this property now automatically adds the web view as a subview of the vc view
+    [newWebView release];
     
+    self.viewController = vc;
+    [vc release];
+    
+    //[self.window addSubview:self.viewController.view];
+    [self.window setRootViewController:self.viewController];
 
-    self.webView.delegate = self;
-
-    [self.window addSubview:self.viewController.view];
-
-    /*
-     * webView
-     * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
-     */
-    
-    NSString* startPage = [[self class] startPage];
-    NSURL *appURL = [NSURL URLWithString:startPage];
-    NSString* loadErr = nil;
-    
-    if(![appURL scheme])
-    {
-        NSString* startFilePath = [[self class] pathForResource:startPage];
-        if (startFilePath == nil)
-        {
-            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
-            NSLog(@"%@", loadErr);
-            appURL = nil;
-        }
-        else {
-            appURL = [NSURL fileURLWithPath:startFilePath];
-        }
-    }
-    
-    if (!loadErr) {
-        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-        [self.webView loadRequest:appReq];
-    } else {
-        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-        [self.webView loadHTMLString:html baseURL:nil];
-        self.loadFromString = YES;
-    }
-
-    [self.window makeKeyAndVisible];
-    
-    if (self.loadFromString) {
-        self.imageView.hidden = YES;
-    }
-    
-    return YES;
 }
+
 
 /**
  When web application loads Add stuff to the DOM, mainly the user-defined settings from the Settings.plist file, and
@@ -895,8 +935,11 @@ BOOL gSplashScreenShown = NO;
     [PluginResult releaseStatus];
     self.pluginObjects = nil;
     self.pluginsMap    = nil;
-    self.viewController = nil;
+
     self.activityView = nil;
+    
+    [self teardownWebView];
+    
     self.window = nil;
     self.imageView = nil;
     self.whitelist = nil;
