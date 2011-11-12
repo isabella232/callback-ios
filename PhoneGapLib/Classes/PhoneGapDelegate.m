@@ -376,35 +376,7 @@ BOOL gSplashScreenShown = NO;
 
     [self reinitializeWebView];
 
-    
-    NSString *startPage = [[self class] startPage]; //TODO make this more configurable, and/or instance method?
-    NSURL *appURL = [NSURL URLWithString:startPage];
-    NSString *loadErr = nil;
-    
-    if (nil == [appURL scheme]) {
-        NSString* startFilePath = [[self class] pathForResource:startPage];
-        if (nil == startFilePath) {
-            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
-            NSLog(@"%@", loadErr);
-            appURL = nil;
-        }
-        else {
-            appURL = [NSURL fileURLWithPath:startFilePath];
-        }
-    }
-    
-    if (nil == loadErr) {
-        NSLog(@"loading appURL: %@",appURL);
-        //TODO make timeoutInterval and cachePolicy configurable?
-        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL 
-                                                cachePolicy:NSURLRequestUseProtocolCachePolicy 
-                                            timeoutInterval:20.0];
-        [self.webView loadRequest:appReq];
-    } else {
-        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
-        [self.webView loadHTMLString:html baseURL:nil];
-        self.loadFromString = YES;
-    }
+    [self loadStartPageIntoWebView];
     
     [self.window makeKeyAndVisible];
 
@@ -538,6 +510,41 @@ BOOL gSplashScreenShown = NO;
     //[self.window addSubview:self.viewController.view];
     [self.window setRootViewController:self.viewController];
 
+}
+
+
+- (void)loadStartPageIntoWebView
+{
+    NSLog(@"loadStartPageIntoWebView");
+    
+    NSString *startPage = [[self class] startPage]; //TODO make this more configurable, and/or instance method?
+    NSURL *appURL = [NSURL URLWithString:startPage];
+    NSString *loadErr = nil;
+    
+    if (nil == [appURL scheme]) {
+        NSString* startFilePath = [[self class] pathForResource:startPage];
+        if (nil == startFilePath) {
+            loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
+            NSLog(@"%@", loadErr);
+            appURL = nil;
+        }
+        else {
+            appURL = [NSURL fileURLWithPath:startFilePath];
+        }
+    }
+    
+    if (nil == loadErr) {
+        NSLog(@"loading appURL: %@",appURL);
+        //TODO make timeoutInterval and cachePolicy configurable?
+        NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL 
+                                                cachePolicy:NSURLRequestUseProtocolCachePolicy 
+                                            timeoutInterval:20.0];
+        [self.webView loadRequest:appReq];
+    } else {
+        NSString* html = [NSString stringWithFormat:@"<html><body> %@ </body></html>", loadErr];
+        [self.webView loadHTMLString:html baseURL:nil];
+        self.loadFromString = YES;
+    }
 }
 
 

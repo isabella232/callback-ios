@@ -93,6 +93,11 @@ Tear down the existing web view.
  */
 - (void)reinitializeWebView;
 
+/**
+ Load the start page into the embedded web view.
+ */
+- (void)loadStartPageIntoWebView;
+
 
 /**
  Configure the web view from self.settings.
