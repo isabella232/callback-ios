@@ -32,6 +32,15 @@
 NSString * const kAppPlistName =  @"PhoneGap";
 NSString * const kAppPlist_PluginsKey = @"Plugins";
 
+static NSString *gapVersion;
+
+
+@interface NSDictionary (LowercaseKeys)
+
+- (NSMutableDictionary*) dictionaryWithLowercaseKeys;
+
+@end
+
 // class extension
 @interface PGLightAppDelegate ()
 
@@ -104,7 +113,7 @@ NSString * const kAppPlist_PluginsKey = @"Plugins";
     return (PGLightAppDelegate*)[[UIApplication sharedApplication] delegate];
 }
 
-+ (NSString*) applicationDocumentsDirectory {
++ (NSString*)applicationDocumentsDirectory {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
     return basePath;
@@ -123,36 +132,15 @@ NSString * const kAppPlist_PluginsKey = @"Plugins";
 
 
 
-+ (NSString*) pathForResource:(NSString*)resourcepath
-{
-    NSBundle * mainBundle = [NSBundle mainBundle];
-    NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
-    NSString       *filename       = [directoryParts lastObject];
-    [directoryParts removeLastObject];
-    
-    NSString* directoryPartsJoined =[directoryParts componentsJoinedByString:@"/"];
-    NSString* directoryStr = [self wwwFolderName];
-    
-    if ([directoryPartsJoined length] > 0) {
-        directoryStr = [NSString stringWithFormat:@"%@/%@", [self wwwFolderName], [directoryParts componentsJoinedByString:@"/"]];
-    }
-    
-    return [mainBundle pathForResource:filename
-                       ofType:@""
-                       inDirectory:directoryStr];
-}
-
 /**
 Returns the current version of phoneGap as read from the VERSION file
 This only touches the filesystem once and stores the result in the class variable gapVersion
 */
-static NSString *gapVersion;
 + (NSString*) phoneGapVersion
 {
 #ifdef PG_VERSION
     gapVersion = SYMBOL_TO_NSSTRING(PG_VERSION);
 #else
-
     if (gapVersion == nil) {
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSString *filename = [mainBundle pathForResource:@"VERSION" ofType:nil];
@@ -348,6 +336,15 @@ static NSString *gapVersion;
  */
 -(id) getCommandInstance:(NSString*)pluginName
 {
+    //TODO muster  up a web view
+    id obj = [self getCommandInstance:pluginName forWebView:nil];
+    
+    return obj;
+}
+
+
+-(id) getCommandInstance:(NSString*)pluginName forWebView:(UIWebView*)aWebView
+{
     // first, we try to find the pluginName in the pluginsMap 
     // (acts as a whitelist as well) if it does not exist, we return nil
     // NOTE: plugin names are matched as lowercase to avoid problems - however, a 
@@ -364,10 +361,12 @@ static NSString *gapVersion;
         // attempt to load the settings for this command class
         NSDictionary* classSettings = [self.settings objectForKey:className];
         
+        //TODO if aWebView is nil, find the first visible web view?
+        
         if (classSettings) {
-            obj = [[NSClassFromString(className) alloc] initWithWebView:webView settings:classSettings];
+            obj = [[NSClassFromString(className) alloc] initWithWebView:aWebView settings:classSettings];
         } else {
-            obj = [[NSClassFromString(className) alloc] initWithWebView:webView];
+            obj = [[NSClassFromString(className) alloc] initWithWebView:aWebView];
         }
         
         if (obj != nil) {
@@ -379,7 +378,6 @@ static NSString *gapVersion;
     }
     return obj;
 }
-
 
 - (void)reinitializePlugins
 {
@@ -599,7 +597,7 @@ static NSString *gapVersion;
 
 @implementation NSDictionary (LowercaseKeys)
 
-- (NSDictionary*) dictionaryWithLowercaseKeys 
+- (NSMutableDictionary*) dictionaryWithLowercaseKeys 
 {
     NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:self.count];
     NSString* key;

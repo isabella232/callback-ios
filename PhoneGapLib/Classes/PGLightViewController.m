@@ -375,7 +375,8 @@
     }
     
     // Fetch an instance of this class
-    PGPlugin* obj = nil; //TODO!!!! [self getCommandInstance:command.className];
+    PGPlugin* obj = [(PGLightAppDelegate*)[[UIApplication sharedApplication] delegate] 
+                     getCommandInstance:command.className forWebView:self.webView];
     
     if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
         NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
@@ -418,5 +419,10 @@
                            inDirectory:directoryStr];
 }
 
+- (void) javascriptAlert:(NSString*)text
+{
+    NSString* jsString = [NSString stringWithFormat:@"alert('%@');", text];
+    [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+}
 
 @end

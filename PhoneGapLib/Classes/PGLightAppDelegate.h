@@ -37,8 +37,8 @@
 
 
 + (PGLightAppDelegate*)sharedInstance;
+
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
-+ (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 
@@ -75,24 +75,15 @@
 - (id) getCommandInstance:(NSString*)pluginName;
 
 
+-(id) getCommandInstance:(NSString*)pluginName forWebView:(UIWebView*)webView;
 
 
-#pragma mark - Application state transitions
-- (void)applicationDidEnterBackground:(UIApplication *)application;
-- (void)applicationWillEnterForeground:(UIApplication *)application;
-- (void)applicationWillResignActive:(UIApplication *)application;
-- (void)applicationWillTerminate:(UIApplication *)application;
 
 
 #pragma mark - Public
 
 + (BOOL) isIPad;
 
-/**
- Force a javascript alert to be shown in the embedded UIWebView
- @param text  Message to be shown in the web view in a javascript alert.
- */
-- (void) javascriptAlert:(NSString*)text;
 
 
 
