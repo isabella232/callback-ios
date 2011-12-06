@@ -16,11 +16,11 @@
 @class Console;
 @class PGWhitelist;
 
-@interface PhoneGapLightAppDelegate : NSObject <UIApplicationDelegate>
+@interface PGLightAppDelegate : NSObject <UIApplicationDelegate>
 {
-    NSMutableDictionary *_pluginObjects;
-    
+
 }
+
 
 @property (nonatomic, readwrite, retain) IBOutlet UIWindow *window;
 
@@ -28,13 +28,15 @@
 @property (nonatomic, readonly, retain) UIImageView *imageView;
 
 @property (nonatomic, readonly, retain) NSMutableDictionary *pluginObjects;
-@property (nonatomic, readonly, retain) NSDictionary *pluginsMap;
+@property (nonatomic, readonly, retain) NSMutableDictionary *pluginsMap;
 @property (nonatomic, readonly, retain) NSDictionary *settings;
 @property (nonatomic, readonly, retain) PGWhitelist* whitelist; // readonly for public
 
 
 #pragma mark - App settings 
 
+
++ (PGLightAppDelegate*)sharedInstance;
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (NSString*) pathForResource:(NSString*)resourcepath;
 + (NSString*) phoneGapVersion;

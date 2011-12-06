@@ -10,7 +10,9 @@
 
 #import "InvokedUrlCommand.h"
 #import "JSONKit.h"
+#import "PGLightAppDelegate.h"
 #import "PGPlugin.h"
+#import "PGWhitelist.h"
 
 @implementation PGLightViewController
 
@@ -33,7 +35,6 @@
         // Create the sessionKey to use throughout the lifetime of the application
         // to authenticate the source of the gap calls
         self.gapSessionKey = [NSString stringWithFormat:@"%d", arc4random()];
-        
     }
     
     return self;
@@ -261,7 +262,8 @@
     [aWebView stringByEvaluatingJavaScriptFromString:sessionKeyScript];
     
     
-    NSDictionary *deviceProperties = [ self deviceProperties];
+    NSDictionary *deviceProperties = [[PGLightAppDelegate sharedInstance] deviceProperties];
+    
     NSMutableString *result = [[NSMutableString alloc] initWithFormat:@"DeviceInfo = %@;", [deviceProperties JSONString]];
     
     /* Settings.plist
@@ -270,7 +272,7 @@
      * such as specifying Full / Lite version, or localization (English vs German, for instance).
      */
     
-    //TODO how to handle multipel settings on multiple views?
+    //TODO how to handle multiple settings on multiple views?
 //    
 //    NSDictionary *temp = [[self class] getBundlePlist:@"Settings"];
 //    if ([temp respondsToSelector:@selector(JSONString)]) {

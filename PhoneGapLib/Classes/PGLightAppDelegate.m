@@ -20,8 +20,7 @@
 #import "PGURLProtocol.h"
 #import "PGWhitelist.h"
 #import "InvokedUrlCommand.h"
-#import "PhoneGapDelegate.h"
-#import "PhoneGapViewController.h"
+#import "PGLightAppDelegate.h"
 #import "PGPlugin.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
@@ -34,15 +33,16 @@ NSString * const kAppPlistName =  @"PhoneGap";
 NSString * const kAppPlist_PluginsKey = @"Plugins";
 
 // class extension
-@interface PhoneGapDelegate ()
+@interface PGLightAppDelegate ()
 
 // readwrite access for self
 
-@property (nonatomic, readwrite, retain) IBOutlet PhoneGapViewController *viewController;
 @property (nonatomic, readwrite, retain) IBOutlet UIActivityIndicatorView *activityView;
 @property (nonatomic, readwrite, retain) UIImageView *imageView;
 
-@property (nonatomic, readwrite, retain) NSDictionary *pluginsMap;
+@property (nonatomic, readwrite, retain) NSMutableDictionary *pluginsMap;
+@property (nonatomic, readwrite, retain) NSMutableDictionary *pluginObjects;
+
 @property (nonatomic, readwrite, retain) NSDictionary *settings;
 @property (nonatomic, readwrite, retain) NSURL *invokedURL;
 
@@ -56,11 +56,11 @@ NSString * const kAppPlist_PluginsKey = @"Plugins";
 @end
 
 
-@implementation PhoneGapLightAppDelegate
+@implementation PGLightAppDelegate
 
-@synthesize window, viewController, activityView, imageView;
+@synthesize window, activityView, imageView;
 @synthesize settings, invokedURL, orientationType;
-@synthesize pluginObjects = _pluginObjects, pluginsMap, whitelist;
+@synthesize pluginObjects = _pluginObjects, pluginsMap = _pluginsMap, whitelist;
 
 - (id) init
 {
@@ -98,6 +98,11 @@ NSString * const kAppPlist_PluginsKey = @"Plugins";
     [super dealloc];
 }
 
+
++ (PGLightAppDelegate*)sharedInstance
+{
+    return (PGLightAppDelegate*)[[UIApplication sharedApplication] delegate];
+}
 
 + (NSString*) applicationDocumentsDirectory {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -299,7 +304,9 @@ static NSString *gapVersion;
         [self.window addSubview:self.activityView];
     }
     
-    self.activityView.center = self.viewController.view.center;
+    //TODO
+    
+    //self.activityView.center = self.viewController.view.center;
     [self.activityView startAnimating];
     
     
