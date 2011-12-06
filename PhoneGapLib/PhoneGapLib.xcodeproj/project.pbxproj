@@ -122,6 +122,14 @@
 		68A32D7D141030E4006B237C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AE141002F100DF4CF2 /* CoreGraphics.framework */; };
 		68A32D7E141030EB006B237C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AA141002F100DF4CF2 /* UIKit.framework */; };
 		68A32D7F141030F3006B237C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 686357AC141002F100DF4CF2 /* Foundation.framework */; };
+		7D76576E148D6D1100E41763 /* PGLightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D76576C148D6D1100E41763 /* PGLightViewController.m */; };
+		7D76576F148D6D1100E41763 /* PGLightViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D76576D148D6D1100E41763 /* PGLightViewController.h */; };
+		7D765770148D6DC100E41763 /* PGLightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D76576C148D6D1100E41763 /* PGLightViewController.m */; };
+		7D765771148D6DC100E41763 /* PGLightViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D76576D148D6D1100E41763 /* PGLightViewController.h */; };
+		7D765774148D6E3E00E41763 /* PhoneGapLightAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D765772148D6E3E00E41763 /* PhoneGapLightAppDelegate.h */; };
+		7D765775148D6E3E00E41763 /* PhoneGapLightAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D765772148D6E3E00E41763 /* PhoneGapLightAppDelegate.h */; };
+		7D765776148D6E3E00E41763 /* PhoneGapLightAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D765773148D6E3E00E41763 /* PhoneGapLightAppDelegate.m */; };
+		7D765777148D6E3E00E41763 /* PhoneGapLightAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D765773148D6E3E00E41763 /* PhoneGapLightAppDelegate.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
 		8887FD671090FBE7009987E8 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8887FD271090FBE7009987E8 /* Camera.m */; };
 		8887FD681090FBE7009987E8 /* Categories.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD281090FBE7009987E8 /* Categories.h */; };
@@ -216,6 +224,10 @@
 		686357DC14100B1600DF4CF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		68A32D7114102E1C006B237C /* libPhoneGap.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPhoneGap.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		68A32D7414103017006B237C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		7D76576C148D6D1100E41763 /* PGLightViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGLightViewController.m; path = Classes/PGLightViewController.m; sourceTree = "<group>"; };
+		7D76576D148D6D1100E41763 /* PGLightViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGLightViewController.h; path = Classes/PGLightViewController.h; sourceTree = "<group>"; };
+		7D765772148D6E3E00E41763 /* PhoneGapLightAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneGapLightAppDelegate.h; path = Classes/PhoneGapLightAppDelegate.h; sourceTree = "<group>"; };
+		7D765773148D6E3E00E41763 /* PhoneGapLightAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneGapLightAppDelegate.m; path = Classes/PhoneGapLightAppDelegate.m; sourceTree = "<group>"; };
 		8887FD261090FBE7009987E8 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = Classes/Camera.h; sourceTree = "<group>"; };
 		8887FD271090FBE7009987E8 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Camera.m; path = Classes/Camera.m; sourceTree = "<group>"; };
 		8887FD281090FBE7009987E8 /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Categories.h; path = Classes/Categories.h; sourceTree = "<group>"; };
@@ -434,6 +446,10 @@
 		8887FD101090FB43009987E8 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				7D765772148D6E3E00E41763 /* PhoneGapLightAppDelegate.h */,
+				7D765773148D6E3E00E41763 /* PhoneGapLightAppDelegate.m */,
+				7D76576C148D6D1100E41763 /* PGLightViewController.m */,
+				7D76576D148D6D1100E41763 /* PGLightViewController.h */,
 				888700D710922F56009987E8 /* Commands */,
 				8887FD361090FBE7009987E8 /* JSON */,
 				888700D910923009009987E8 /* Util */,
@@ -490,6 +506,8 @@
 				30C684811406CB38004C1A8E /* PGWhitelist.h in Headers */,
 				30B39EC013D0268B0009682A /* PGSplashScreen.h in Headers */,
 				30E563D113E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
+				7D765771148D6DC100E41763 /* PGLightViewController.h in Headers */,
+				7D765775148D6E3E00E41763 /* PhoneGapLightAppDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -526,6 +544,8 @@
 				30C684941407044B004C1A8E /* PGURLProtocol.h in Headers */,
 				30356214141049E1006C2D43 /* PGWhitelistTests.h in Headers */,
 				30A90B9114588697006178D3 /* JSONKit.h in Headers */,
+				7D76576F148D6D1100E41763 /* PGLightViewController.h in Headers */,
+				7D765774148D6E3E00E41763 /* PhoneGapLightAppDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,6 +753,8 @@
 				30C684831406CB38004C1A8E /* PGWhitelist.m in Sources */,
 				30C684971407044B004C1A8E /* PGURLProtocol.m in Sources */,
 				30A90B9414588697006178D3 /* JSONKit.m in Sources */,
+				7D765770148D6DC100E41763 /* PGLightViewController.m in Sources */,
+				7D765777148D6E3E00E41763 /* PhoneGapLightAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,6 +800,8 @@
 				30C684821406CB38004C1A8E /* PGWhitelist.m in Sources */,
 				30C684961407044B004C1A8E /* PGURLProtocol.m in Sources */,
 				30A90B9314588697006178D3 /* JSONKit.m in Sources */,
+				7D76576E148D6D1100E41763 /* PGLightViewController.m in Sources */,
+				7D765776148D6E3E00E41763 /* PhoneGapLightAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
