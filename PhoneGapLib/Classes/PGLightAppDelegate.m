@@ -29,8 +29,8 @@
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 
-NSString * const kAppPlistName =  @"PhoneGap";
-NSString * const kAppPlist_PluginsKey = @"Plugins";
+static NSString * const kPGAppPlistName =  @"PhoneGap";
+static NSString * const kPGAppPlist_PluginsKey = @"Plugins";
 
 static NSString *gapVersion;
 
@@ -383,9 +383,9 @@ This only touches the filesystem once and stores the result in the class variabl
 {
     NSLog(@"reinitializePlugins");
     // read from Plugins dict in PhoneGap.plist in the app bundle
-    NSDictionary* pluginsDict = [self.settings objectForKey:kAppPlist_PluginsKey];
+    NSDictionary* pluginsDict = [self.settings objectForKey:kPGAppPlist_PluginsKey];
     if (pluginsDict == nil) {
-        NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", kAppPlist_PluginsKey, kAppPlistName);
+        NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", kPGAppPlist_PluginsKey, kPGAppPlistName);
         NSAssert(nil != pluginsDict,@"Plugins key required in plist");
     }
     
@@ -477,7 +477,7 @@ This only touches the filesystem once and stores the result in the class variabl
  */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSDictionary *settingsDict = [[self class] getBundlePlist:kAppPlistName];
+    NSDictionary *settingsDict = [[self class] getBundlePlist:kPGAppPlistName];
     self.settings = settingsDict;
     
     [self reinitializePlugins];

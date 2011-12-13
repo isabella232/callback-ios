@@ -125,9 +125,9 @@
 		7D76576E148D6D1100E41763 /* PGLightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D76576C148D6D1100E41763 /* PGLightViewController.m */; };
 		7D76576F148D6D1100E41763 /* PGLightViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D76576D148D6D1100E41763 /* PGLightViewController.h */; };
 		7D765770148D6DC100E41763 /* PGLightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D76576C148D6D1100E41763 /* PGLightViewController.m */; };
-		7D765771148D6DC100E41763 /* PGLightViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D76576D148D6D1100E41763 /* PGLightViewController.h */; };
+		7D765771148D6DC100E41763 /* PGLightViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D76576D148D6D1100E41763 /* PGLightViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D765774148D6E3E00E41763 /* PGLightAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D765772148D6E3E00E41763 /* PGLightAppDelegate.h */; };
-		7D765775148D6E3E00E41763 /* PGLightAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D765772148D6E3E00E41763 /* PGLightAppDelegate.h */; };
+		7D765775148D6E3E00E41763 /* PGLightAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D765772148D6E3E00E41763 /* PGLightAppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D765776148D6E3E00E41763 /* PGLightAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D765773148D6E3E00E41763 /* PGLightAppDelegate.m */; };
 		7D765777148D6E3E00E41763 /* PGLightAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D765773148D6E3E00E41763 /* PGLightAppDelegate.m */; };
 		8887FD661090FBE7009987E8 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8887FD261090FBE7009987E8 /* Camera.h */; };
