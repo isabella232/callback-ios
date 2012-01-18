@@ -5,8 +5,10 @@
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  */
 
-
 #import "Sound.h"
+
+
+#import "JSONKit.h"
 #import "PhonegapDelegate.h"
 
 #define DOCUMENTS_SCHEME_PREFIX		@"documents://"

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
+#import "JSONKit.h"
 #import "Location.h"
 #import "Sound.h"
 #import "DebugConsole.h"

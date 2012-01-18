@@ -7,7 +7,6 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "JSONKit.h"
 
 @class InvokedUrlCommand;
 @class PhoneGapViewController;
