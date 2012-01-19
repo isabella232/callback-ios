@@ -12,6 +12,7 @@
 #import <JSONKit.h>
 #import <NSData+Base64.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "NSMutableArray+QueueAdditions.h"
 
 
 @implementation PGFile

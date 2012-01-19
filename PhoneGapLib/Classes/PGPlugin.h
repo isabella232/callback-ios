@@ -11,7 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "PluginResult.h"
-#import "NSMutableArray+QueueAdditions.h"
+
 
 #define PGPluginHandleOpenURLNotification	@"PGPluginHandleOpenURLNotification"
 

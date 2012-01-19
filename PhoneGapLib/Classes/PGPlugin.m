@@ -11,6 +11,7 @@
 
 #import "PGPlugin.h"
 #import "PhoneGapDelegate.h"
+#import "NSMutableArray+QueueAdditions.h"
 
 
 @implementation PGPlugin
