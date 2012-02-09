@@ -72,6 +72,10 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage cast:nil] autorelease];
 }
++(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsBool: (BOOL) theMessage
+{
+	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithBool: theMessage] cast:nil] autorelease];
+}
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsInt: (int) theMessage
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithInt: theMessage] cast:nil] autorelease];
@@ -94,6 +98,10 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 	return [[[self alloc] initWithStatus: statusOrdinal message: theMessage cast:theCast] autorelease];
 }
 
++(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsBool: (BOOL) theMessage cast: (NSString*) theCast
+{
+	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithBool: theMessage] cast:theCast] autorelease];
+}
 +(PluginResult*) resultWithStatus: (PGCommandStatus) statusOrdinal messageAsInt: (int) theMessage cast: (NSString*) theCast
 {
 	return [[[self alloc] initWithStatus: statusOrdinal message: [NSNumber numberWithInt: theMessage] cast:theCast] autorelease];

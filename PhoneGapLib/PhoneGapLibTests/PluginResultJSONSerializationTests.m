@@ -13,6 +13,13 @@
 
 @implementation PluginResultJSONSerializationTests
 
+- (void)testSerializingMessageAsBool {
+    PluginResult *result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsBool:YES];
+    NSDictionary *dic = [[result toJSONString] objectFromJSONString];
+    NSNumber *message = [dic objectForKey:@"message"];
+    STAssertTrue([[NSNumber numberWithBool:YES] isEqual:message], nil);
+}
+
 - (void)testSerializingMessageAsInt {
     PluginResult *result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt:5];
     NSDictionary *dic = [[result toJSONString] objectFromJSONString];
