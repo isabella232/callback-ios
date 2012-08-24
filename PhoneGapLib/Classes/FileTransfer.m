@@ -151,7 +151,6 @@
     NSArray * results = nil;
     
     NSLog(@"Write file %@", filePath);
-    NSError *error=[[[NSError alloc]init] autorelease];
     
     @try {
         NSString * parentPath = [ filePath stringByDeletingLastPathComponent ];
@@ -159,6 +158,7 @@
         // check if the path exists => create directories if needed
         if(![[NSFileManager defaultManager] fileExistsAtPath:parentPath ]) [[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:nil];
         
+        NSError *error = nil;
     	BOOL response = [data writeToFile:filePath options:NSDataWritingFileProtectionNone error:&error];
         
         if ( response == NO ) {
@@ -171,17 +171,17 @@
         	[self performSelectorOnMainThread:@selector(downloadSuccess:) withObject:results waitUntilDone:YES];
     	}
     }
-    @catch (id exception) {
-        NSLog(@"File Transfer Error %@", [error description]);
-            
+    @catch (NSException *exception) {
+        NSLog(@"File Transfer Error %@", [exception reason]);
+        
         // jump back to main thread
-        [self performSelectorOnMainThread:@selector(fail:) withObject:[error description] waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(fail:) withObject:[exception reason] waitUntilDone:YES];
     }
     
     [pool drain];
 }
 
--(void) downloadSuccess:(NSMutableArray *)arguments 
+-(void) downloadSuccess:(NSMutableArray *)arguments
 {
     NSString * callbackId = [arguments objectAtIndex:0];
     NSString * filePath = [arguments objectAtIndex:1];
@@ -201,7 +201,7 @@
     NSString * callbackId = [arguments objectAtIndex:0];
     NSString * error = [arguments objectAtIndex:1];
     
-    NSLog(@"File Transfer Error: %@", [error description]);
+    NSLog(@"File Transfer Error: %@", error);
     
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString: 
                                     [error stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
